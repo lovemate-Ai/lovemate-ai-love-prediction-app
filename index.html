@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💖 LoveMate AI - True Love Predictor</title>
+<style>
+body{font-family:'Poppins',sans-serif;background:linear-gradient(135deg,#ff66cc,#9933ff);color:white;text-align:center;margin:0;padding:0;}
+.container{max-width:650px;margin:40px auto;background:rgba(255,255,255,0.12);padding:25px;border-radius:20px;box-shadow:0 0 25px rgba(0,0,0,0.3);backdrop-filter:blur(7px);}
+h1{font-size:30px;animation:pulse 2s infinite;}
+@keyframes pulse{0%{text-shadow:0 0 10px #fff;}50%{text-shadow:0 0 25px #ff99ff;}100%{text-shadow:0 0 10px #fff;}}
+input,select{width:90%;padding:12px;margin:8px 0;border:none;border-radius:12px;font-size:16px;outline:none;}
+button{background:#ff3399;color:white;padding:12px 30px;font-size:16px;border:none;border-radius:30px;margin-top:10px;cursor:pointer;transition:0.3s;}
+button:hover{background:#cc0088;transform:scale(1.05);}
+.result{margin-top:20px;background:rgba(255,255,255,0.15);padding:15px;border-radius:15px;display:none;animation:fadeIn 1s ease-in;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+.graph-bar{height:20px;background:#00ffcc;border-radius:10px;margin-top:10px;transition:width 1s ease-in-out;}
+.calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:10px;}
+.day{padding:8px;border-radius:8px;font-size:13px;background:rgba(255,255,255,0.2);}
+footer{margin-top:25px;font-size:13px;opacity:0.8;}
+.invite-box{margin-top:25px;background:rgba(255,255,255,0.15);padding:15px;border-radius:15px;}
+.quiz-options button{display:block;width:80%;margin:5px auto;background:#9933ff;}
+.quiz-options button:hover{background:#00cc99;}
+.photo-box{display:flex;justify-content:center;gap:10px;margin-top:10px;}
+.photo-box input{width:45%;}
+
+/* Popup Animation */
+.popup {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  background: rgba(255,255,255,0.95);
+  color: #333; padding: 20px;
+  border-radius: 20px; text-align:center;
+  z-index: 9999;
+  transition: 0.3s;
+  box-shadow:0 0 25px rgba(0,0,0,0.5);
+}
+.popup.show {transform: translate(-50%, -50%) scale(1);}
+.popup button {margin-top:10px;background:#ff3399;color:white;padding:8px 20px;border:none;border-radius:20px;}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>💖 LoveMate AI 💖</h1>
+<p>AI Love Prediction • Story • Graph • Calendar • Quiz • Photo Mood Test • Invite System</p>
+
+<input type="text" id="yourName" placeholder="Your Name">
+<input type="date" id="yourBirth">
+<input type="text" id="crushName" placeholder="Crush Name">
+<select id="zodiac">
+<option value="">Select Your Zodiac</option>
+<option>Aries</option><option>Taurus</option><option>Gemini</option>
+<option>Cancer</option><option>Leo</option><option>Virgo</option>
+<option>Libra</option><option>Scorpio</option><option>Sagittarius</option>
+<option>Capricorn</option><option>Aquarius</option><option>Pisces</option>
+</select>
+<button onclick="predictLove()">💞 Predict Love</button>
+
+<div class="result" id="resultBox">
+  <h2>💌 Your Love Prediction</h2>
+  <p id="prediction"></p>
+  <h3>🎁 Secret Message</h3>
+  <p id="secretMsg"></p>
+  <h3>💍 Compatibility Graph</h3>
+  <div class="graph-bar" id="graphBar"></div>
+  <p id="alertText"></p>
+  <h3>💖 30-Day Love Calendar</h3>
+  <div class="calendar" id="calendarBox"></div>
+  <h3>💌 AI Love Story</h3>
+  <p id="loveStory"></p>
+
+  <h3>🕹️ Love Quiz</h3>
+  <div id="quizArea">
+    <button onclick="startQuiz()">Start Quiz</button>
+    <div id="quizContent" style="display:none;">
+      <p id="quizQuestion"></p>
+      <div class="quiz-options" id="quizOptions"></div>
+      <p id="quizResult"></p>
+    </div>
+  </div>
+
+  <h3>📸 Photo Mood Test (Offline AI)</h3>
+  <div class="photo-box">
+    <input type="file" id="photo1" accept="image/*">
+    <input type="file" id="photo2" accept="image/*">
+  </div>
+  <button onclick="analyzePhotos()">Analyze Mood ❤️</button>
+  <p id="photoScore"></p>
+
+  <h3>🎧 Voice Result</h3>
+  <button onclick="speakResult()">🔊 Play My Love Result</button>
+</div>
+
+<div class="invite-box">
+  <h2>💞 Invite Your Friends</h2>
+  <p>Share your special LoveMate link 💌</p>
+  <button onclick="generateInvite()">Generate Invite Link</button>
+  <p id="inviteLink"></p>
+  <button onclick="copyLink()">📋 Copy Link</button>
+  <button onclick="shareWhatsApp()">WhatsApp</button>
+  <button onclick="shareFacebook()">Facebook</button>
+</div>
+
+<!-- Popup -->
+<div class="popup" id="popupMsg">
+  <p id="popupText"></p>
+  <button onclick="closePopup()">Close</button>
+</div>
+
+<footer>© 2025 LoveMate AI 💘 | Developed by <b>MD YEASIR NAHID SAIMON</b></footer>
+</div>
+
+<script>
+// ---------------- AI LOVE ENGINE ----------------
+function predictLove(){
+  const name=document.getElementById('yourName').value.trim();
+  const crush=document.getElementById('crushName').value.trim();
+  const birth=document.getElementById('yourBirth').value;
+  const zodiac=document.getElementById('zodiac').value;
+  if(!name||!crush||!birth||!zodiac){alert("Please fill all fields 💕");return;}
+
+  const score=(name.length+crush.length+birth.replace(/-/g,'').length+zodiac.length)%101;
+  const pred=["Your love is destined to bloom 🌹","You share a soulful connection 💫",
+  "True love is near ❤️","You two are cosmic partners ✨","A romantic surprise awaits 💌",
+  "Mutual attraction is strong 💕","You are meant to be together 💍","Love will test your patience 💖"];
+  const msg=["You will meet your soulmate in 7 days 😍","They secretly like your smile 💘",
+  "A text from your crush is coming soon 💌","Someone is dreaming about you 🌙",
+  "Destiny will bring you closer 💞","You both think of each other ❤️"];
+
+  document.getElementById('prediction').innerHTML=`<b>${score}% Compatibility</b> — ${pred[Math.floor(Math.random()*pred.length)]}`;
+  document.getElementById('secretMsg').textContent=msg[Math.floor(Math.random()*msg.length)];
+  document.getElementById('resultBox').style.display='block';
+
+  const graph=document.getElementById('graphBar');
+  graph.style.width=score+'%';
+  document.getElementById('alertText').textContent=(score<40)?"⚠️ Relationship Alert — try to reconnect!":"💖 Relationship looks healthy!";
+
+  const cal=document.getElementById('calendarBox');
+  cal.innerHTML='';
+  for(let i=1;i<=30;i++){
+    const luck=Math.random();
+    const color=(luck>0.7)?'#00ff99':(luck>0.3)?'#ffcc00':'#ff3366';
+    const mood=(luck>0.7)?'Lucky':(luck>0.3)?'Neutral':'Bad';
+    cal.innerHTML+=`<div class='day' style='background:${color}'>${i}<br>${mood}</div>`;
+  }
+
+  const stories=[
+    `Once upon a time, ${name} met ${crush} under a pink sunset 💞.`,
+    `${name} always thought ${crush} was just a dream 💫.`,
+    `One rainy evening, ${name} and ${crush} shared an umbrella ❤️.`,
+    `${crush}'s laughter became ${name}'s favorite song 💕.`,
+    `${name} and ${crush} are two souls, one heartbeat ✨.`,
+    `Every message from ${crush} made ${name}'s heart race 💌.`,
+    `They met in silence, but their hearts screamed 💓.`,
+    `When ${name} looked into ${crush}'s eyes, the world stopped 🌎.`,
+    `${name} remembers the first "Hi" from ${crush} 💖.`,
+    `Even miles apart, ${name} feels ${crush}'s heartbeat 💘.`
+  ];
+  document.getElementById('loveStory').textContent=stories[Math.floor(Math.random()*stories.length)];
+}
+
+// ---------------- QUIZ SYSTEM ----------------
+const quizQuestions=[
+  {q:"Do you believe in love at first sight?",options:["Yes 💖","No 🤔"],correct:0},
+  {q:"Would you wait for your crush to text first?",options:["Always","Never"],correct:1},
+  {q:"Your ideal date place?",options:["Beach 🏖️","Cafe ☕","Park 🌳"],correct:1},
+  {q:"Favorite gift?",options:["Roses 🌹","Chocolates 🍫","Letters 💌"],correct:2}
+];
+let quizIndex=0,score=0;
+function startQuiz(){quizIndex=0;score=0;document.getElementById('quizContent').style.display='block';showQuestion();}
+function showQuestion(){
+  const q=quizQuestions[quizIndex];
+  document.getElementById('quizQuestion').textContent=q.q;
+  const optDiv=document.getElementById('quizOptions'); optDiv.innerHTML='';
+  q.options.forEach((opt,i)=>{const btn=document.createElement('button');btn.textContent=opt;btn.onclick=()=>checkAnswer(i);optDiv.appendChild(btn);});
+}
+function checkAnswer(i){const q=quizQuestions[quizIndex];if(i===q.correct)score++;quizIndex++;if(quizIndex<quizQuestions.length)showQuestion();else document.getElementById('quizResult').innerHTML=`💘 Your Love IQ: <b>${score}/${quizQuestions.length}</b>`;}
+
+// ---------------- VOICE RESULT ----------------
+function speakResult(){
+  const text=document.getElementById('prediction').innerText+" "+document.getElementById('secretMsg').innerText;
+  const synth=window.speechSynthesis;
+  const utter=new SpeechSynthesisUtterance(text);
+  utter.lang='en-US';
+  synth.speak(utter);
+}
+
+// ---------------- INVITE SYSTEM ----------------
+let inviteLink="";
+function generateInvite(){
+  inviteLink=window.location.href.split('?')[0]+"?ref="+Date.now();
+  document.getElementById('inviteLink').innerHTML=`<a href="${inviteLink}" target="_blank" style="color:#00ffcc">${inviteLink}</a>`;
+  showPopup("✅ Invite link generated!");
+}
+function copyLink(){
+  if(!inviteLink){alert("Generate the link first!"); return;}
+  navigator.clipboard.writeText(inviteLink).then(()=>showPopup("📋 Link copied to clipboard!"));
+}
+function shareWhatsApp(){
+  if(!inviteLink){alert("Generate the link first!"); return;}
+  const url="https://wa.me/?text="+encodeURIComponent("💞 Join me on LoveMate AI!\n"+inviteLink);
+  window.open(url,"_blank");
+}
+function shareFacebook(){
+  if(!inviteLink){alert("Generate the link first!"); return;}
+  const url="https://www.facebook.com/sharer/sharer.php?u="+encodeURIComponent(inviteLink);
+  window.open(url,"_blank");
+}
+
+// ---------------- POPUP ----------------
+function showPopup(msg){
+  const popup=document.getElementById('popupMsg');
+  document.getElementById('popupText').innerText=msg;
+  popup.classList.add('show');
+  setTimeout(()=>popup.classList.remove('show'),2500);
+}
+function closePopup(){document.getElementById('popupMsg').classList.remove('show');}
+
+// ---------------- PHOTO MOOD TEST ----------------
+function analyzePhotos(){
+  const file1=document.getElementById('photo1').files[0];
+  const file2=document.getElementById('photo2').files[0];
+  if(!file1 || !file2){alert("Please upload both photos 😊"); return;}
+  const reader1=new FileReader(), reader2=new FileReader(); let img1=0,img2=0;
+  reader1.onload=function(e){const img=new Image(); img.src=e.target.result; img.onload=function(){img1=analyzeImage(img); computeScore();}}
+  reader2.onload=function(e){const img=new Image(); img.src=e.target.result; img.onload=function(){img2=analyzeImage(img); computeScore();}}
+  reader1.readAsDataURL(file1); reader2.readAsDataURL(file2);
+  function analyzeImage(img){const canvas=document.createElement('canvas');canvas.width=100;canvas.height=100;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,100,100);const data=ctx.getImageData(0,0,100,100).data;let brightness=0;for(let i=0;i<data.length;i+=4){brightness+=0.2126*data[i]+0.7152*data[i+1]+0.0722*data[i+2];}return brightness/2500;}
+  function computeScore(){if(img1 && img2){const score=Math.floor((Math.min(img1,img2)/Math.max(img1,img2))*100);document.getElementById('photoScore').innerHTML=`📸 Emotional Match Score: <b>${score}%</b>`;}}
+}
+</script>
+</body>
+</html>
