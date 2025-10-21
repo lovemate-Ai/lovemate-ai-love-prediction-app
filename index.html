@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="google-site-verification" content="Mw28r_Th6BxyYW91QjD4SOvqFL11IT40B2kYt9O6zrY" />
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>💖 LoveMate AI - True Love Predictor</title>
@@ -25,23 +24,28 @@ footer{margin-top:25px;font-size:13px;opacity:0.8;}
 .photo-box{display:flex;justify-content:center;gap:10px;margin-top:10px;}
 .photo-box input{width:45%;}
 
-/* Popup Animation */
+/* POPUP STYLING */
 .popup {
   position: fixed;
   top: 50%; left: 50%;
   transform: translate(-50%, -50%) scale(0);
   background: rgba(255,255,255,0.95);
-  color: #333; padding: 20px;
-  border-radius: 20px; text-align:center;
+  color: #333;
+  padding: 25px;
+  border-radius: 20px;
+  text-align: center;
   z-index: 9999;
+  width: 90%;
+  max-width: 400px;
   transition: 0.3s;
   box-shadow:0 0 25px rgba(0,0,0,0.5);
 }
 .popup.show {transform: translate(-50%, -50%) scale(1);}
-.popup button {margin-top:10px;background:#ff3399;color:white;padding:8px 20px;border:none;border-radius:20px;}
+.popup button {margin-top:15px;background:#ff3399;color:white;padding:10px 20px;border:none;border-radius:20px;cursor:pointer;font-size:16px;}
 </style>
 </head>
 <body>
+
 <div class="container">
 <h1>💖 LoveMate AI 💖</h1>
 <p>AI Love Prediction • Story • Graph • Calendar • Quiz • Photo Mood Test • Invite System</p>
@@ -103,6 +107,20 @@ footer{margin-top:25px;font-size:13px;opacity:0.8;}
   <button onclick="shareFacebook()">Facebook</button>
 </div>
 
+<!-- WELCOME POPUP -->
+<div id="welcomePopup" class="popup">
+  <h2>💖 Welcome to LoveMate AI 💖</h2>
+  <p>Follow these simple steps to get your love prediction:</p>
+  <ol style="text-align:left; margin-left:20px;">
+    <li>Enter your name & your crush's name.</li>
+    <li>Choose your Zodiac sign & birth date.</li>
+    <li>Click <b>💞 Predict Love</b> to get your Love Score.</li>
+    <li>Explore Love Story, Compatibility Graph & Mood Test.</li>
+    <li>Share your results with friends using the Invite button.</li>
+  </ol>
+  <button onclick="closeWelcome()">Got it! 🎉</button>
+</div>
+
 <!-- Popup -->
 <div class="popup" id="popupMsg">
   <p id="popupText"></p>
@@ -113,6 +131,16 @@ footer{margin-top:25px;font-size:13px;opacity:0.8;}
 </div>
 
 <script>
+// ---------------- SHOW WELCOME POPUP ----------------
+window.onload = function() {
+  document.getElementById('welcomePopup').classList.add('show');
+}
+
+// ---------------- CLOSE WELCOME POPUP ----------------
+function closeWelcome() {
+  document.getElementById('welcomePopup').classList.remove('show');
+}
+
 // ---------------- AI LOVE ENGINE ----------------
 function predictLove(){
   const name=document.getElementById('yourName').value.trim();
@@ -172,8 +200,8 @@ let quizIndex=0,score=0;
 function startQuiz(){quizIndex=0;score=0;document.getElementById('quizContent').style.display='block';showQuestion();}
 function showQuestion(){
   const q=quizQuestions[quizIndex];
-  document.getElementById('quizQuestion').textContent=q.q;
   const optDiv=document.getElementById('quizOptions'); optDiv.innerHTML='';
+  document.getElementById('quizQuestion').textContent=q.q;
   q.options.forEach((opt,i)=>{const btn=document.createElement('button');btn.textContent=opt;btn.onclick=()=>checkAnswer(i);optDiv.appendChild(btn);});
 }
 function checkAnswer(i){const q=quizQuestions[quizIndex];if(i===q.correct)score++;quizIndex++;if(quizIndex<quizQuestions.length)showQuestion();else document.getElementById('quizResult').innerHTML=`💘 Your Love IQ: <b>${score}/${quizQuestions.length}</b>`;}
@@ -209,7 +237,7 @@ function shareFacebook(){
   window.open(url,"_blank");
 }
 
-// ---------------- POPUP ----------------
+// ---------------- GENERAL POPUP ----------------
 function showPopup(msg){
   const popup=document.getElementById('popupMsg');
   document.getElementById('popupText').innerText=msg;
@@ -233,5 +261,3 @@ function analyzePhotos(){
 </script>
 </body>
 </html>
-
-
